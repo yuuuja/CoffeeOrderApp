@@ -1,11 +1,11 @@
 package com.yuuuja.coffeeorderapp.ui.home
 
-import android.R.attr.onClick
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -18,19 +18,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.yuuuja.coffeeorderapp.model.Category
 import com.yuuuja.coffeeorderapp.model.MenuMini
 import com.yuuuja.coffeeorderapp.model.dummyMenus
-import com.yuuuja.coffeeorderapp.ui.theme.Blue
-import com.yuuuja.coffeeorderapp.ui.theme.Grey
-import com.yuuuja.coffeeorderapp.ui.theme.Red
+import com.yuuuja.coffeeorderapp.ui.common.AppChip
+import com.yuuuja.coffeeorderapp.ui.common.ChipSpecs
+import com.yuuuja.coffeeorderapp.ui.theme.*
 import com.yuuuja.coffeeorderapp.util.won
 import com.yuuuja.coffeeorderapp.utils.imageResOf
 
@@ -42,50 +41,56 @@ fun HomeScreen(navController: NavController) {
         "커피" to Category.COFFEE,
         "논커피" to Category.NON_COFFEE,
         "티" to Category.TEA,
-        "에이드" to Category.ADE)
+        "에이드" to Category.ADE
+    )
 
-    var selected by remember { mutableStateOf(0)}
+    var selected by remember { mutableStateOf(0) }
     val selectedCategory = categories[selected].second
 
     val filtered = remember(selectedCategory) {
         dummyMenus.filter { it.category == selectedCategory }
     }
 
+    val listState = rememberLazyListState()
+
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title =  { Text("MENU") },
+                title = { Text("MENU") },
                 actions = {
-                    IconButton(onClick = {navController.navigate("cart")}){
-                        Icon(Icons.Default.ShoppingCart, contentDescription = "장바구니")
+                    IconButton(onClick = { navController.navigate("cart") }) {
+                        Icon(Icons.Default.ShoppingCart, contentDescription = "장바구니", tint = Kaki)
                     }
                 }
             )
         },
 
-    ) { pad ->
+        ) { pad ->
         Column(
             modifier = Modifier
                 .padding(pad)
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(horizontal = 14.dp, vertical = 12.dp)
                 .fillMaxSize(),
         ) {
             // 카테고리 탭
-            Row(
+            LazyRow(
+                state = listState,
+                contentPadding = PaddingValues(horizontal = 16.dp),
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                categories.forEachIndexed { index, (label, _) ->
-                    FilterChip(
-                        selected = selected == index,
-                        onClick = { selected = index },
-                        label = { Text(label) }
+                items(categories) { (label, _) ->
+                    AppChip(
+                        label = label,
+                        selected = (label == categories[selected].first),
+                        onClick = { selected = categories.indexOfFirst { it.first == label } },
+                        spec = ChipSpecs.Medium
                     )
                 }
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(15.dp))
 
             //메뉴 리스트
             LazyColumn(
@@ -96,7 +101,7 @@ fun HomeScreen(navController: NavController) {
                     val m = filtered[i]
                     MenuRow(
                         menu = m,
-                    onClick = { navController.navigate("detail/${m.id}") }
+                        onClick = { navController.navigate("detail/${m.id}") }
                     )
                 }
             }
@@ -131,19 +136,42 @@ private fun MenuRow(
             )
             Spacer(Modifier.width(12.dp))
 
-            Column(Modifier.weight(1f)){
-                Text(menu.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Spacer(Modifier.width(4.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    menu.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 20.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(Modifier.width(6.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     if (menu.rule.allowHot && menu.rule.allowIce) {
-                        AssistChip(onClick = {}, label = { Text("ICE" , color = Blue) }, enabled = false)
-                        AssistChip(onClick = {}, label = { Text("HOT" , color = Red) }, enabled = false)
+                        AssistChip(
+                            onClick = {},
+                            label = { Text("ICE", color = Blue) },
+                            enabled = false
+                        )
+                        AssistChip(
+                            onClick = {},
+                            label = { Text("HOT", color = Red) },
+                            enabled = false
+                        )
                     }
                     if (!menu.rule.allowHot && menu.rule.allowIce)
-                        AssistChip(onClick = {}, label = { Text("ICE ONLY", color = Blue) }, enabled = false)
+                        AssistChip(
+                            onClick = {},
+                            label = { Text("ICE ONLY", color = Blue) },
+                            enabled = false
+                        )
                 }
                 Spacer(Modifier.width(4.dp))
-                Text(menu.price.won(), style = MaterialTheme.typography.bodyMedium, color = Grey)
+                Text(
+                    menu.price.won(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 17.sp,
+                    color = Grey
+                )
             }
 
         }
