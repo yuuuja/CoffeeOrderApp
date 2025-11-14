@@ -45,8 +45,8 @@ object ChipSpecs {
         textStyle = { MaterialTheme.typography.labelLarge }
     )
     val Small = ChipSpec(
-        height = 30.dp, minWidth = 56.dp, corner = 15.dp, borderWidth = 1.dp,
-        textStyle = { MaterialTheme.typography.labelMedium }
+        height = 55.dp, minWidth = 100.dp, corner = 15.dp, borderWidth = 1.dp,
+        textStyle = { MaterialTheme.typography.labelLarge }
     )
 }
 
@@ -57,7 +57,8 @@ fun AppChip(
     selected: Boolean,
     onClick: () -> Unit,
     palette: ChipPalette = ChipPalette(),
-    spec: ChipSpec = ChipSpecs.Medium,             // 기본은 중간 사이즈
+    spec: ChipSpec = ChipSpecs.Medium, // 기본사이즈
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val colors = FilterChipDefaults.filterChipColors(
@@ -79,8 +80,8 @@ fun AppChip(
     ) {
         Box(
             modifier = modifier
-                .fillMaxWidth()
-                .height(20.dp)
+                //.fillMaxWidth()
+                //.height(20.dp)
                 .padding(horizontal = 12.dp, vertical = 2.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -88,7 +89,7 @@ fun AppChip(
                 text = label,
                 style = spec.textStyle(),
                 textAlign = TextAlign.Center,
-                maxLines = 1, //한 줄 고정
+               // maxLines = 1, //한 줄 고정
                 overflow = TextOverflow.Clip
             )
         }
