@@ -290,13 +290,11 @@ fun OptionSection(menu: MenuMini) {
         Spacer(Modifier.height(20.dp))
 
         if (hasPersonalOption(category)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("퍼스널 옵션", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.width(5.dp))
-                Text("샷 추가", style = MaterialTheme.typography.labelMedium, color = Grey)
-            }
+
+            Text("퍼스널 옵션", style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(8.dp))
+            Text("샷 추가", style = MaterialTheme.typography.labelLarge, color = Grey)
+
             Spacer(Modifier.height(8.dp))
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -305,19 +303,27 @@ fun OptionSection(menu: MenuMini) {
                 AppChip(
                     label = "연하게\n(+0)",
                     selected = (shot == ShotOption.LIGHT),
-                    onClick = { shot = if (shot == ShotOption.LIGHT) ShotOption.NONE else ShotOption.LIGHT },
+                    onClick = {
+                        shot = if (shot == ShotOption.LIGHT) ShotOption.NONE else ShotOption.LIGHT
+                    },
                     spec = ChipSpecs.Small
                 )
                 AppChip(
                     label = "+1샷\n(+600)",
                     selected = (shot == ShotOption.PLUS1SHOT),
-                    onClick = { shot = if (shot == ShotOption.PLUS1SHOT) ShotOption.NONE else ShotOption.PLUS1SHOT },
+                    onClick = {
+                        shot =
+                            if (shot == ShotOption.PLUS1SHOT) ShotOption.NONE else ShotOption.PLUS1SHOT
+                    },
                     spec = ChipSpecs.Small
                 )
                 AppChip(
                     label = "+2샷\n(+1,200)",
                     selected = (shot == ShotOption.PLUS2SHOT),
-                    onClick = { shot = if (shot == ShotOption.PLUS2SHOT) ShotOption.NONE else ShotOption.PLUS2SHOT },
+                    onClick = {
+                        shot =
+                            if (shot == ShotOption.PLUS2SHOT) ShotOption.NONE else ShotOption.PLUS2SHOT
+                    },
                     spec = ChipSpecs.Small
                 )
             }
