@@ -146,6 +146,7 @@ fun OptionSection(menu: MenuMini) {
 
     // 규칙 적용
     val tempCfg = tempConfigOf(category, rule)
+    val isIceOnly = tempCfg.enableIce && !tempCfg.enableHot
     val sizeCfg = sizeConfigOf(category)
 
     Column(
@@ -194,19 +195,35 @@ fun OptionSection(menu: MenuMini) {
 
         Spacer(Modifier.height(8.dp))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            AppChip("ICE",
-                selected = temp == Temperature.ICE,
-                onClick = { temp = Temperature.ICE },
+        if(isIceOnly){
+            AppChip(
+                label = "ICE ONLY",
+                selected = true,
+                onClick = {},
                 spec = ChipSpecs.Medium,
-                enabled = tempCfg.enableIce
+                enabled = false, //클릭 안되게 고정
             )
-            AppChip("HOT",
-                selected = temp == Temperature.HOT,
-                onClick = { temp = Temperature.HOT },
-                spec = ChipSpecs.Medium,
-                enabled = tempCfg.enableHot
-            )
+        } else {
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                AppChip(
+                    "ICE",
+                    selected = temp == Temperature.ICE,
+                    onClick = { temp = Temperature.ICE },
+                    spec = ChipSpecs.Medium,
+                    enabled = tempCfg.enableIce
+                )
+                AppChip(
+                    "HOT",
+                    selected = temp == Temperature.HOT,
+                    onClick = { temp = Temperature.HOT },
+                    spec = ChipSpecs.Medium,
+                    enabled = tempCfg.enableHot
+                )
+            }
         }
 
         Spacer(Modifier.height(20.dp))
