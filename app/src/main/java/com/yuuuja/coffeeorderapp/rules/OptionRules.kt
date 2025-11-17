@@ -14,7 +14,7 @@ data class TempConfig(
 )
 
 fun tempConfigOf(category: Category, rule: TemperatureRule): TempConfig =
-    when (category){
+    when (category) {
         Category.ADE -> TempConfig(true, false)
         else -> TempConfig(rule.allowIce, rule.allowHot)
     }
@@ -28,20 +28,28 @@ data class SizeConfig(
 )
 
 fun sizeConfigOf(category: Category): SizeConfig =
-    when(category) {
+    when (category) {
         Category.COFFEE,
         Category.NON_COFFEE -> SizeConfig(
             showChips = true,
             enableSmall = true, enableMedium = true, enableLarge = true
         )
+
         Category.TEA -> SizeConfig(
             showChips = false,
             enableSmall = false, enableMedium = false, enableLarge = false,
             showDefaultLabel = true
         )
+
         Category.ADE -> SizeConfig(
             showChips = true,
             enableSmall = false, enableMedium = true, enableLarge = true
         )
     }
 
+enum class ShotOption(val extra: Int){
+    NONE(0),
+    LIGHT(0),
+    PLUS1SHOT(600),
+    PLUS2SHOT(1200)
+}

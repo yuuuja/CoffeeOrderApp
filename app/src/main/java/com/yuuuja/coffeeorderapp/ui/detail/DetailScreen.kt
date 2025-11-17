@@ -28,6 +28,7 @@ import com.yuuuja.coffeeorderapp.model.DrinkSize
 import com.yuuuja.coffeeorderapp.model.MenuMini
 import com.yuuuja.coffeeorderapp.model.Temperature
 import com.yuuuja.coffeeorderapp.model.dummyMenus
+import com.yuuuja.coffeeorderapp.rules.ShotOption
 import com.yuuuja.coffeeorderapp.rules.hasCupOption
 import com.yuuuja.coffeeorderapp.rules.hasPersonalOption
 import com.yuuuja.coffeeorderapp.rules.sizeConfigOf
@@ -35,6 +36,7 @@ import com.yuuuja.coffeeorderapp.rules.tempConfigOf
 import com.yuuuja.coffeeorderapp.ui.common.AppChip
 import com.yuuuja.coffeeorderapp.ui.common.ChipSpecs
 import com.yuuuja.coffeeorderapp.ui.theme.DarkBrown
+import com.yuuuja.coffeeorderapp.ui.theme.Grey
 import com.yuuuja.coffeeorderapp.ui.theme.Kaki
 import com.yuuuja.coffeeorderapp.ui.theme.LightGrey
 import com.yuuuja.coffeeorderapp.utils.imageResOf
@@ -143,6 +145,8 @@ fun OptionSection(menu: MenuMini) {
     var cup by remember { mutableStateOf(DISPOSABLE) }
     var temp by remember { mutableStateOf(Temperature.ICE) }
     var size by remember { mutableStateOf(DrinkSize.M) }
+    var shot by remember { mutableStateOf(ShotOption.NONE) }
+
 
     // 규칙 적용
     val tempCfg = tempConfigOf(category, rule)
@@ -152,7 +156,7 @@ fun OptionSection(menu: MenuMini) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        if(hasCupOption(category)){
+        if (hasCupOption(category)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -167,12 +171,14 @@ fun OptionSection(menu: MenuMini) {
 
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                AppChip("일회용 컵",
+                AppChip(
+                    "일회용 컵",
                     selected = cup == CupType.DISPOSABLE,
                     onClick = { cup = CupType.DISPOSABLE },
                     spec = ChipSpecs.Medium
                 )
-                AppChip("개인 컵",
+                AppChip(
+                    "개인 컵",
                     selected = cup == CupType.PERSONAL,
                     onClick = { cup = CupType.PERSONAL },
                     spec = ChipSpecs.Medium
@@ -183,7 +189,7 @@ fun OptionSection(menu: MenuMini) {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-        ){
+        ) {
             Text("ICE & HOT", style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.width(5.dp))
             Text(
@@ -195,7 +201,7 @@ fun OptionSection(menu: MenuMini) {
 
         Spacer(Modifier.height(8.dp))
 
-        if(isIceOnly){
+        if (isIceOnly) {
             AppChip(
                 label = "ICE ONLY",
                 selected = true,
@@ -229,7 +235,7 @@ fun OptionSection(menu: MenuMini) {
         Spacer(Modifier.height(20.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Text("SIZE", style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.width(5.dp))
             Text(
@@ -250,6 +256,7 @@ fun OptionSection(menu: MenuMini) {
                     spec = ChipSpecs.Small
                 )
             }
+
             sizeCfg.showChips -> {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     if (sizeCfg.enableSmall) {
@@ -282,31 +289,39 @@ fun OptionSection(menu: MenuMini) {
 
         Spacer(Modifier.height(20.dp))
 
-        if(hasPersonalOption(category)){
-            Text("퍼스널 옵션", style = MaterialTheme.typography.titleMedium)
+        if (hasPersonalOption(category)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("퍼스널 옵션", style = MaterialTheme.typography.titleMedium)
+                Spacer(Modifier.width(5.dp))
+                Text("샷 추가", style = MaterialTheme.typography.labelMedium, color = Grey)
+            }
             Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 AppChip(
                     label = "연하게\n(+0)",
-                    selected = false,
-                    onClick = { /* TODO */ },
+                    selected = (shot == ShotOption.LIGHT),
+                    onClick = { shot = if (shot == ShotOption.LIGHT) ShotOption.NONE else ShotOption.LIGHT },
                     spec = ChipSpecs.Small
                 )
                 AppChip(
                     label = "+1샷\n(+600)",
-                    selected = false,
-                    onClick = { /* TODO */ },
+                    selected = (shot == ShotOption.PLUS1SHOT),
+                    onClick = { shot = if (shot == ShotOption.PLUS1SHOT) ShotOption.NONE else ShotOption.PLUS1SHOT },
                     spec = ChipSpecs.Small
                 )
                 AppChip(
                     label = "+2샷\n(+1,200)",
-                    selected = false,
-                    onClick = { /* TODO */ },
+                    selected = (shot == ShotOption.PLUS2SHOT),
+                    onClick = { shot = if (shot == ShotOption.PLUS2SHOT) ShotOption.NONE else ShotOption.PLUS2SHOT },
                     spec = ChipSpecs.Small
                 )
             }
         }
-        // ... 샷 추가, 연하게 등
     }
 }
 
