@@ -19,8 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -29,6 +31,7 @@ import com.yuuuja.coffeeorderapp.model.MenuMini
 import com.yuuuja.coffeeorderapp.model.dummyMenus
 import com.yuuuja.coffeeorderapp.ui.common.AppChip
 import com.yuuuja.coffeeorderapp.ui.common.ChipSpecs
+import com.yuuuja.coffeeorderapp.ui.detail.DetailScreen
 import com.yuuuja.coffeeorderapp.ui.theme.*
 import com.yuuuja.coffeeorderapp.util.won
 import com.yuuuja.coffeeorderapp.utils.imageResOf
@@ -109,7 +112,11 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
-
+@Preview(showBackground = true)
+@Composable
+fun preview() {
+    HomeScreen(navController = NavController(LocalContext.current))
+}
 @Composable
 private fun MenuRow(
     menu: MenuMini,
