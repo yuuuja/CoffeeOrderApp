@@ -1,14 +1,19 @@
 package com.yuuuja.coffeeorderapp.ui.detail
 
+
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -23,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.yuuuja.coffeeorderapp.model.Category
 import com.yuuuja.coffeeorderapp.model.CupType
 import com.yuuuja.coffeeorderapp.model.CupType.*
@@ -40,7 +47,10 @@ import com.yuuuja.coffeeorderapp.ui.common.ChipSpecs
 import com.yuuuja.coffeeorderapp.ui.theme.DarkBrown
 import com.yuuuja.coffeeorderapp.ui.theme.Grey
 import com.yuuuja.coffeeorderapp.ui.theme.Kaki
+import com.yuuuja.coffeeorderapp.ui.theme.LightBeige
+import com.yuuuja.coffeeorderapp.ui.theme.LightBrown
 import com.yuuuja.coffeeorderapp.ui.theme.LightGrey
+import com.yuuuja.coffeeorderapp.util.won
 import com.yuuuja.coffeeorderapp.utils.imageResOf
 
 
@@ -54,8 +64,18 @@ fun DetailScreen(navController: NavController, id: Long) {
 
     // 수량 / 사이즈 / 온도 등은 나중에 ViewModel로 빼도 되고, 지금은 remember로 충분
     var quantity by remember { mutableStateOf(1) }
+    var optionExtra by remember { mutableStateOf(0) }
+
+    val basePrice = menu.price
+
+    // 총 금액 = (기본가+옵션추가금) * 수량
+    val totalPrice = remember(basePrice, optionExtra, quantity) {
+        (basePrice + optionExtra) * quantity
+    }
+
 
     Scaffold(
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
                 navigationIcon = {
@@ -73,34 +93,43 @@ fun DetailScreen(navController: NavController, id: Long) {
         },
         bottomBar = {
             DetailBottomBar(
-                totalPrice = menu.price,
-                quantity = 1,
-                onMinus = { /* TODO */ },
-                onPlus = { /* TODO */ },
+                totalPrice = totalPrice,
+                quantity = quantity,
+                onMinus = { if (quantity > 1) quantity-- },
+                onPlus = { quantity++ },
                 onBuyNow = { /* TODO */ },
                 onAddToCart = { navController.navigate("cart") }
             )
         }
     ) { pad ->
-        DetailContent(
-            menu = menu,
+        Column(
             modifier = Modifier
-                .padding(pad)
-                .padding(horizontal = 40.dp, vertical = 16.dp)
-        )
+                .padding(32.dp)
+                .fillMaxSize()
+        ) {
+            DetailContent(
+                menu = menu,
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
+                onExtraPriceChange = { extra -> optionExtra = extra }
+            )
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun preview() {
-    DetailScreen(navController = NavController(LocalContext.current), id = 2)
+    val navController = rememberNavController()
+    DetailScreen(navController = navController, id = 2)
 }
 
 @Composable
 fun DetailContent(
     menu: MenuMini,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onExtraPriceChange: (Int) -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -126,7 +155,7 @@ fun DetailContent(
 
         Spacer(Modifier.height(24.dp))
 
-        OptionSection(menu = menu)
+        OptionSection(menu = menu, onExtraPriceChange = onExtraPriceChange)
     }
 }
 
@@ -145,7 +174,7 @@ fun DetailImage(menu: MenuMini) {
 }
 
 @Composable
-fun OptionSection(menu: MenuMini) {
+fun OptionSection(menu: MenuMini, onExtraPriceChange: (Int) -> Unit) {
     val category: Category = menu.category
     val rule = menu.rule
 
@@ -160,6 +189,30 @@ fun OptionSection(menu: MenuMini) {
     val tempCfg = tempConfigOf(category, rule)
     val isIceOnly = tempCfg.enableIce && !tempCfg.enableHot
     val sizeCfg = sizeConfigOf(category)
+
+    val sizeExtra = remember(category, size) {
+        when (category) {
+            Category.COFFEE, Category.NON_COFFEE -> when (size) {
+                DrinkSize.S -> -400
+                DrinkSize.M -> 0
+                DrinkSize.L -> 1200
+            }
+
+            Category.TEA -> 0
+            Category.ADE -> when (size) {
+                DrinkSize.M -> 0
+                DrinkSize.L -> 1200
+                else -> 0
+            }
+        }
+    }
+
+    val shotExtra = shot.extra
+
+    LaunchedEffect(size, shot) {
+        val extra = sizeExtra + shotExtra
+        onExtraPriceChange(extra)
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -348,24 +401,90 @@ fun DetailBottomBar(
     onBuyNow: () -> Unit,
     onAddToCart: () -> Unit
 ) {
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+    Surface(
+        tonalElevation = 4.dp,
+        color = Color.White,
+        modifier = Modifier.heightIn(max = 140.dp)
     ) {
-        // 여기 나중에 "총 금액 / 수량" 영역 넣고
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 12.dp)
+        ) {
+            // 총 금액 / 수량
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("총 금액", style = MaterialTheme.typography.bodyMedium, color = Grey)
+                    Spacer(Modifier.width(10.dp))
+                    Text(text = totalPrice.won(), style = MaterialTheme.typography.titleMedium)
 
-        Button(
-            onClick = onBuyNow,
-            modifier = Modifier.fillMaxWidth()
+                    //Spacer(Modifier.width(150.dp))
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Button(
+                        onClick = onMinus,
+                        modifier = Modifier.size(32.dp),
+                        contentPadding = PaddingValues(0.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = LightBrown,
+                            contentColor = Color.White
+                        ),
 
-        ) { Text("바로 구매") }
+                        ) {
+                        Text("-")
+                    }
+                    Text(
+                        text = quantity.toString(),
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Button(
+                        onClick = onPlus,
+                        modifier = Modifier.size(32.dp),
+                        contentPadding = PaddingValues(0.dp),
+                        shape = RoundedCornerShape(4.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = LightBrown,
+                            contentColor = Color.White
+                        ),
 
-        Spacer(Modifier.height(8.dp))
+                        ) {
+                        Text("+")
+                    }
+                }
+            }
 
-        OutlinedButton(
-            onClick = onAddToCart,
-            modifier = Modifier.fillMaxWidth()
-        ) { Text("장바구니 담기") }
+
+            Spacer(Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = onBuyNow,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Kaki,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(18.dp)
+                ) { Text("바로 구매") }
+
+                OutlinedButton(
+                    onClick = onAddToCart,
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Kaki
+                    ),
+                    border = BorderStroke(1.dp, Kaki),
+                    shape = RoundedCornerShape(18.dp)
+                ) { Text("장바구니 담기") }
+            }
+        }
     }
 }
