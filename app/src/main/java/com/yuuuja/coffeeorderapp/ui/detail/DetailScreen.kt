@@ -104,7 +104,8 @@ fun DetailScreen(navController: NavController, id: Long) {
     ) { pad ->
         Column(
             modifier = Modifier
-                .padding(32.dp)
+                .padding(horizontal = 32.dp, vertical = 16.dp)
+                .padding(top = 50.dp)
                 .fillMaxSize()
         ) {
             DetailContent(
@@ -122,7 +123,7 @@ fun DetailScreen(navController: NavController, id: Long) {
 @Composable
 fun preview() {
     val navController = rememberNavController()
-    DetailScreen(navController = navController, id = 2)
+    DetailScreen(navController = navController, id = 1)
 }
 
 @Composable
