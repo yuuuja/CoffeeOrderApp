@@ -78,6 +78,10 @@ fun DetailScreen(navController: NavController, id: Long) {
         containerColor = Color.White,
         topBar = {
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.White
+                ),
+
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "뒤로가기", tint = Kaki)
@@ -419,7 +423,7 @@ fun DetailBottomBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("총 금액", style = MaterialTheme.typography.bodyMedium, color = Grey)
+                    Text("총 금액", style = MaterialTheme.typography.bodyLarge, color = Grey)
                     Spacer(Modifier.width(10.dp))
                     Text(text = totalPrice.won(), style = MaterialTheme.typography.titleMedium)
 
@@ -428,7 +432,7 @@ fun DetailBottomBar(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Button(
                         onClick = onMinus,
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier.size(25.dp),
                         contentPadding = PaddingValues(0.dp),
                         shape = RoundedCornerShape(4.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -446,7 +450,7 @@ fun DetailBottomBar(
                     )
                     Button(
                         onClick = onPlus,
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier.size(25.dp),
                         contentPadding = PaddingValues(0.dp),
                         shape = RoundedCornerShape(4.dp),
                         colors = ButtonDefaults.buttonColors(
