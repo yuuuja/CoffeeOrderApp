@@ -109,7 +109,7 @@ fun DetailScreen(navController: NavController, id: Long) {
                 onAddToCart = { showCartDialog = true }
             )
         }
-    ) {
+    ) { pad ->
         Column(
             modifier = Modifier
                 .padding(horizontal = 32.dp, vertical = 16.dp)
