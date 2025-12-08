@@ -512,14 +512,14 @@ fun DetailBottomBar(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CartDialogPreview() {
-    CartAddedDialog(
-        onMoveToCart = {},
-        onContinue = {}
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun CartDialogPreview() {
+//    CartAddedDialog(
+//        onMoveToCart = {},
+//        onContinue = {}
+//    )
+//}
 
 
 @Composable
@@ -544,11 +544,11 @@ fun CartAddedDialog(
                     contentScale = ContentScale.Fit
                 )
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(20.dp))
 
                 Text(
                     text = "장바구니에 상품이 정상적으로 담겼습니다.",
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center
                 )
 
