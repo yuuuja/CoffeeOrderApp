@@ -1,6 +1,6 @@
 package com.yuuuja.coffeeorderapp.ui.detail
 
-
+import com.yuuuja.coffeeorderapp.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.yuuuja.coffeeorderapp.model.Category
@@ -73,6 +74,9 @@ fun DetailScreen(navController: NavController, id: Long) {
         (basePrice + optionExtra) * quantity
     }
 
+    var showCartDialog by remember { mutableStateOf(false) }
+
+
 
     Scaffold(
         containerColor = Color.White,
@@ -102,10 +106,10 @@ fun DetailScreen(navController: NavController, id: Long) {
                 onMinus = { if (quantity > 1) quantity-- },
                 onPlus = { quantity++ },
                 onBuyNow = { /* TODO */ },
-                onAddToCart = { navController.navigate("cart") }
+                onAddToCart = { showCartDialog = true }
             )
         }
-    ) { pad ->
+    ) {
         Column(
             modifier = Modifier
                 .padding(horizontal = 32.dp, vertical = 16.dp)
@@ -119,6 +123,18 @@ fun DetailScreen(navController: NavController, id: Long) {
                     .verticalScroll(rememberScrollState()),
                 onExtraPriceChange = { extra -> optionExtra = extra }
             )
+
+            if (showCartDialog) {
+                CartAddedDialog(
+                    onMoveToCart = {
+                        showCartDialog = false
+                        navController.navigate("cart")
+                    },
+                    onContinue = {
+                        showCartDialog = false
+                    }
+                )
+            }
         }
     }
 }
@@ -150,13 +166,13 @@ fun DetailContent(
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
         )
-        Spacer(Modifier.height(4.dp))
-        Text(
-            text = "간단한 메뉴 설명",
-            style = MaterialTheme.typography.bodySmall,
-            color = DarkBrown,
-            textAlign = TextAlign.Center
-        )
+//        Spacer(Modifier.height(4.dp))
+//        Text(
+//            text = "간단한 메뉴 설명",
+//            style = MaterialTheme.typography.bodySmall,
+//            color = DarkBrown,
+//            textAlign = TextAlign.Center
+//        )
 
         Spacer(Modifier.height(24.dp))
 
@@ -414,17 +430,17 @@ fun DetailBottomBar(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp)
+                .padding(horizontal = 32.dp, vertical = 12.dp)
         ) {
             // 총 금액 / 수량
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(100.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("총 금액", style = MaterialTheme.typography.bodyLarge, color = Grey)
-                    Spacer(Modifier.width(10.dp))
+                    Text(" 총 금액", style = MaterialTheme.typography.titleMedium, color = Grey)
+                    Spacer(Modifier.width(15.dp))
                     Text(text = totalPrice.won(), style = MaterialTheme.typography.titleMedium)
 
                     //Spacer(Modifier.width(150.dp))
@@ -432,7 +448,7 @@ fun DetailBottomBar(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Button(
                         onClick = onMinus,
-                        modifier = Modifier.size(25.dp),
+                        modifier = Modifier.size(28.dp),
                         contentPadding = PaddingValues(0.dp),
                         shape = RoundedCornerShape(4.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -443,14 +459,16 @@ fun DetailBottomBar(
                         ) {
                         Text("-")
                     }
+                    Spacer(Modifier.width(5.dp))
                     Text(
                         text = quantity.toString(),
                         modifier = Modifier.padding(horizontal = 8.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )
+                    Spacer(Modifier.width(5.dp))
                     Button(
                         onClick = onPlus,
-                        modifier = Modifier.size(25.dp),
+                        modifier = Modifier.size(28.dp),
                         contentPadding = PaddingValues(0.dp),
                         shape = RoundedCornerShape(4.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -489,6 +507,81 @@ fun DetailBottomBar(
                     border = BorderStroke(1.dp, Kaki),
                     shape = RoundedCornerShape(18.dp)
                 ) { Text("장바구니 담기") }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CartDialogPreview() {
+    CartAddedDialog(
+        onMoveToCart = {},
+        onContinue = {}
+    )
+}
+
+
+@Composable
+fun CartAddedDialog(
+    onMoveToCart: () -> Unit,
+    onContinue: () -> Unit
+) {
+    Dialog(onDismissRequest = onContinue) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = Color.White,
+            border = BorderStroke(2.dp, DarkBrown)
+        ) {
+            Column(
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.symbol),
+                    contentDescription = "장바구니에 담겼습니다",
+                    modifier = Modifier.size(80.dp),
+                    contentScale = ContentScale.Fit
+                )
+
+                Spacer(Modifier.height(16.dp))
+
+                Text(
+                    text = "장바구니에 상품이 정상적으로 담겼습니다.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(Modifier.height(24.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = onMoveToCart,
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Kaki
+                        ),
+                        border = BorderStroke(1.dp, Kaki),
+                        shape = RoundedCornerShape(18.dp)
+                    ) {
+                        Text("장바구니 이동")
+                    }
+
+                    OutlinedButton(
+                        onClick = onContinue,
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Kaki
+                        ),
+                        border = BorderStroke(1.dp, Kaki),
+                        shape = RoundedCornerShape(18.dp)
+                    ) {
+                        Text("계속 담기")
+                    }
+                }
             }
         }
     }
