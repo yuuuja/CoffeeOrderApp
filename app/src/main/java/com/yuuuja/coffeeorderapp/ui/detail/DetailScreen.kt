@@ -130,13 +130,12 @@ fun DetailScreen(navController: NavController, id: Long, cartContract: CartContr
             modifier = Modifier
                 .padding(horizontal = 32.dp, vertical = 16.dp)
                 .padding(top = 50.dp)
-                .fillMaxSize()
+                .fillMaxWidth()
         ) {
             DetailContent(
                 menu = menu,
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                    .weight(1f)
             )
 
             Spacer(Modifier.height(16.dp))
@@ -179,7 +178,7 @@ fun DetailContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         DetailImage(menu = menu)
@@ -201,8 +200,6 @@ fun DetailContent(
 //        )
 
         Spacer(Modifier.height(24.dp))
-
-
     }
 }
 
