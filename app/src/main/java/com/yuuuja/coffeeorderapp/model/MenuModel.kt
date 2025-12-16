@@ -2,6 +2,8 @@ package com.yuuuja.coffeeorderapp.model
 
 enum class Category { COFFEE, NON_COFFEE, TEA, ADE }
 enum class Temperature { HOT, ICE }
+enum class CupType { DISPOSABLE, PERSONAL }
+enum class DrinkSize { S, M, L }
 
 data class TemperatureRule(
     val allowHot: Boolean,
