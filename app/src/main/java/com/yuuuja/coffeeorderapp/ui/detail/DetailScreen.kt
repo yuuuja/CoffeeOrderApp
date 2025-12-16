@@ -3,8 +3,8 @@ package com.yuuuja.coffeeorderapp.ui.detail
 import com.yuuuja.coffeeorderapp.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,9 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.yuuuja.coffeeorderapp.model.CartItem
 import com.yuuuja.coffeeorderapp.model.Category
 import com.yuuuja.coffeeorderapp.model.CupType
-import com.yuuuja.coffeeorderapp.model.CupType.*
 import com.yuuuja.coffeeorderapp.model.DrinkSize
 import com.yuuuja.coffeeorderapp.model.MenuMini
 import com.yuuuja.coffeeorderapp.model.Temperature
@@ -48,16 +47,16 @@ import com.yuuuja.coffeeorderapp.ui.common.ChipSpecs
 import com.yuuuja.coffeeorderapp.ui.theme.DarkBrown
 import com.yuuuja.coffeeorderapp.ui.theme.Grey
 import com.yuuuja.coffeeorderapp.ui.theme.Kaki
-import com.yuuuja.coffeeorderapp.ui.theme.LightBeige
 import com.yuuuja.coffeeorderapp.ui.theme.LightBrown
-import com.yuuuja.coffeeorderapp.ui.theme.LightGrey
 import com.yuuuja.coffeeorderapp.util.won
 import com.yuuuja.coffeeorderapp.utils.imageResOf
+import com.yuuuja.coffeeorderapp.viewmodel.CartContract
+import com.yuuuja.coffeeorderapp.viewmodel.FakeCartViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(navController: NavController, id: Long) {
+fun DetailScreen(navController: NavController, id: Long, cartContract: CartContract) {
 
     val menu: MenuMini = remember(id) {
         dummyMenus.first { it.id == id }
@@ -66,6 +65,10 @@ fun DetailScreen(navController: NavController, id: Long) {
     // 수량 / 사이즈 / 온도 등은 나중에 ViewModel로 빼도 되고, 지금은 remember로 충분
     var quantity by remember { mutableStateOf(1) }
     var optionExtra by remember { mutableStateOf(0) }
+    var cup by remember { mutableStateOf(CupType.DISPOSABLE) }
+    var temp by remember { mutableStateOf(Temperature.ICE) }
+    var size by remember { mutableStateOf(DrinkSize.M) }
+    var shot by remember { mutableStateOf(ShotOption.NONE) }
 
     val basePrice = menu.price
 
@@ -106,7 +109,20 @@ fun DetailScreen(navController: NavController, id: Long) {
                 onMinus = { if (quantity > 1) quantity-- },
                 onPlus = { quantity++ },
                 onBuyNow = { /* TODO */ },
-                onAddToCart = { showCartDialog = true }
+                onAddToCart = {
+                    cartContract.add(
+                        CartItem(
+                            id = System.currentTimeMillis(), // 임시 ID (나중에 UUID/증가값으로 개선)
+                            menu = menu,
+                            quantity = quantity,
+                            cup = cup,
+                            temp = temp,
+                            size = size,
+                            shot = shot
+                        )
+                    )
+                    showCartDialog = true
+                }
             )
         }
     ) { pad ->
@@ -119,8 +135,18 @@ fun DetailScreen(navController: NavController, id: Long) {
             DetailContent(
                 menu = menu,
                 modifier = Modifier
+                    .verticalScroll(rememberScrollState())
                     .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            OptionSection(
+                menu = menu,
+                cup = cup, onCupChange = { cup = it },
+                temp = temp, onTempChange = { temp = it },
+                size = size, onSizeChange = { size = it },
+                shot = shot, onShotChange = { shot = it },
                 onExtraPriceChange = { extra -> optionExtra = extra }
             )
 
@@ -143,14 +169,14 @@ fun DetailScreen(navController: NavController, id: Long) {
 @Composable
 fun preview() {
     val navController = rememberNavController()
-    DetailScreen(navController = navController, id = 1)
+    val fakeCart = FakeCartViewModel()
+    DetailScreen(navController = navController, id = 1, cartContract = fakeCart)
 }
 
 @Composable
 fun DetailContent(
     menu: MenuMini,
-    modifier: Modifier = Modifier,
-    onExtraPriceChange: (Int) -> Unit
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -176,7 +202,7 @@ fun DetailContent(
 
         Spacer(Modifier.height(24.dp))
 
-        OptionSection(menu = menu, onExtraPriceChange = onExtraPriceChange)
+
     }
 }
 
@@ -195,15 +221,20 @@ fun DetailImage(menu: MenuMini) {
 }
 
 @Composable
-fun OptionSection(menu: MenuMini, onExtraPriceChange: (Int) -> Unit) {
+fun OptionSection(
+    menu: MenuMini,
+    cup: CupType,
+    onCupChange: (CupType) -> Unit,
+    temp: Temperature,
+    onTempChange: (Temperature) -> Unit,
+    size: DrinkSize,
+    onSizeChange: (DrinkSize) -> Unit,
+    shot: ShotOption,
+    onShotChange: (ShotOption) -> Unit,
+    onExtraPriceChange: (Int) -> Unit
+) {
     val category: Category = menu.category
     val rule = menu.rule
-
-    // 상태
-    var cup by remember { mutableStateOf(DISPOSABLE) }
-    var temp by remember { mutableStateOf(Temperature.ICE) }
-    var size by remember { mutableStateOf(DrinkSize.M) }
-    var shot by remember { mutableStateOf(ShotOption.NONE) }
 
 
     // 규칙 적용
@@ -256,13 +287,13 @@ fun OptionSection(menu: MenuMini, onExtraPriceChange: (Int) -> Unit) {
                 AppChip(
                     "일회용 컵",
                     selected = cup == CupType.DISPOSABLE,
-                    onClick = { cup = CupType.DISPOSABLE },
+                    onClick = { onCupChange(CupType.DISPOSABLE)},
                     spec = ChipSpecs.Medium
                 )
                 AppChip(
                     "개인 컵",
                     selected = cup == CupType.PERSONAL,
-                    onClick = { cup = CupType.PERSONAL },
+                    onClick = { onCupChange(CupType.PERSONAL) },
                     spec = ChipSpecs.Medium
                 )
             }
@@ -300,14 +331,14 @@ fun OptionSection(menu: MenuMini, onExtraPriceChange: (Int) -> Unit) {
                 AppChip(
                     "ICE",
                     selected = temp == Temperature.ICE,
-                    onClick = { temp = Temperature.ICE },
+                    onClick = { onTempChange(Temperature.ICE) },
                     spec = ChipSpecs.Medium,
                     enabled = tempCfg.enableIce
                 )
                 AppChip(
                     "HOT",
                     selected = temp == Temperature.HOT,
-                    onClick = { temp = Temperature.HOT },
+                    onClick = { onTempChange(Temperature.HOT) },
                     spec = ChipSpecs.Medium,
                     enabled = tempCfg.enableHot
                 )
@@ -334,7 +365,7 @@ fun OptionSection(menu: MenuMini, onExtraPriceChange: (Int) -> Unit) {
                 AppChip(
                     label = "M",
                     selected = size == DrinkSize.M,
-                    onClick = { size = DrinkSize.M },
+                    onClick = { onSizeChange(DrinkSize.M) },
                     spec = ChipSpecs.Small
                 )
             }
@@ -345,7 +376,7 @@ fun OptionSection(menu: MenuMini, onExtraPriceChange: (Int) -> Unit) {
                         AppChip(
                             label = "S\n(-400)",
                             selected = size == DrinkSize.S,
-                            onClick = { size = DrinkSize.S },
+                            onClick = {  onSizeChange(DrinkSize.S) },
                             spec = ChipSpecs.Small
                         )
                     }
@@ -353,7 +384,7 @@ fun OptionSection(menu: MenuMini, onExtraPriceChange: (Int) -> Unit) {
                         AppChip(
                             label = "M\n(+0)",
                             selected = size == DrinkSize.M,
-                            onClick = { size = DrinkSize.M },
+                            onClick = {  onSizeChange(DrinkSize.M) },
                             spec = ChipSpecs.Small
                         )
                     }
@@ -361,7 +392,7 @@ fun OptionSection(menu: MenuMini, onExtraPriceChange: (Int) -> Unit) {
                         AppChip(
                             label = "L\n(+1,200)",
                             selected = size == DrinkSize.L,
-                            onClick = { size = DrinkSize.L },
+                            onClick = {  onSizeChange(DrinkSize.L) },
                             spec = ChipSpecs.Small
                         )
                     }
@@ -386,7 +417,7 @@ fun OptionSection(menu: MenuMini, onExtraPriceChange: (Int) -> Unit) {
                     label = "연하게\n(+0)",
                     selected = (shot == ShotOption.LIGHT),
                     onClick = {
-                        shot = if (shot == ShotOption.LIGHT) ShotOption.NONE else ShotOption.LIGHT
+                        onShotChange(if (shot == ShotOption.LIGHT) ShotOption.NONE else ShotOption.LIGHT)
                     },
                     spec = ChipSpecs.Small
                 )
@@ -394,8 +425,7 @@ fun OptionSection(menu: MenuMini, onExtraPriceChange: (Int) -> Unit) {
                     label = "+1샷\n(+600)",
                     selected = (shot == ShotOption.PLUS1SHOT),
                     onClick = {
-                        shot =
-                            if (shot == ShotOption.PLUS1SHOT) ShotOption.NONE else ShotOption.PLUS1SHOT
+                        onShotChange(if (shot == ShotOption.PLUS1SHOT) ShotOption.NONE else ShotOption.PLUS1SHOT)
                     },
                     spec = ChipSpecs.Small
                 )
@@ -403,8 +433,7 @@ fun OptionSection(menu: MenuMini, onExtraPriceChange: (Int) -> Unit) {
                     label = "+2샷\n(+1,200)",
                     selected = (shot == ShotOption.PLUS2SHOT),
                     onClick = {
-                        shot =
-                            if (shot == ShotOption.PLUS2SHOT) ShotOption.NONE else ShotOption.PLUS2SHOT
+                        onShotChange(if (shot == ShotOption.PLUS2SHOT) ShotOption.NONE else ShotOption.PLUS2SHOT)
                     },
                     spec = ChipSpecs.Small
                 )

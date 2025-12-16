@@ -20,27 +20,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.yuuuja.coffeeorderapp.model.Category
 import com.yuuuja.coffeeorderapp.model.MenuMini
 import com.yuuuja.coffeeorderapp.model.dummyMenus
 import com.yuuuja.coffeeorderapp.ui.common.AppChip
 import com.yuuuja.coffeeorderapp.ui.common.ChipSpecs
-import com.yuuuja.coffeeorderapp.ui.detail.DetailScreen
 import com.yuuuja.coffeeorderapp.ui.theme.*
 import com.yuuuja.coffeeorderapp.util.won
 import com.yuuuja.coffeeorderapp.utils.imageResOf
+import com.yuuuja.coffeeorderapp.viewmodel.CartContract
+import com.yuuuja.coffeeorderapp.viewmodel.FakeCartViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, cartContract: CartContract) {
     val categories = listOf(
         "커피" to Category.COFFEE,
         "논커피" to Category.NON_COFFEE,
@@ -120,7 +121,8 @@ fun HomeScreen(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun preview() {
-    HomeScreen(navController = NavController(LocalContext.current))
+    val fakeCart = FakeCartViewModel()
+    HomeScreen(navController = rememberNavController(), cartContract = fakeCart)
 }
 @Composable
 private fun MenuRow(
