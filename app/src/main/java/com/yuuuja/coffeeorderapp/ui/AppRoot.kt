@@ -35,10 +35,17 @@ fun AppRoot() {
             arguments = listOf(navArgument("id") { type = NavType.LongType })
         ) { backStack ->
             val id = backStack.arguments?.getLong("id") ?: 0L
-            DetailRoute(navController , id)
+            DetailRoute(
+                navController=navController,
+                cartContract = cartViewModel,
+                id = id
+            )
         }
         composable("cart") {
-            CartRoute(navController)
+            CartRoute(
+                navController = navController,
+                cartContract = cartViewModel
+            )
         }
         composable("splash") {
             SplashScreen(navController = navController)

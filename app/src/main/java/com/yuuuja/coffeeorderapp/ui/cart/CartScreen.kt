@@ -40,7 +40,7 @@ import com.yuuuja.coffeeorderapp.viewmodel.FakeCartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartScreen(cart: CartContract, onBack:() -> Unit) {
+fun CartScreen(navController: NavController, cart: CartContract) {
 
     var items = cart.items
     val totalPrice = items.sumOf { it.linePrice() }
@@ -53,7 +53,7 @@ fun CartScreen(cart: CartContract, onBack:() -> Unit) {
                     containerColor = Color.White
                 ),
                 navigationIcon = {
-                    IconButton(onClick = { onBack }) {
+                    IconButton(onClick = { navController.popBackStack("home", false) }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "뒤로가기", tint = Kaki)
                     }
                 },
@@ -74,7 +74,7 @@ fun CartScreen(cart: CartContract, onBack:() -> Unit) {
                 modifier = Modifier
                     .padding(pad)
                     .fillMaxSize(),
-                onGoBack = { onBack }
+                onGoBack = { navController.popBackStack("home", false) }
             )
         } else {
             LazyColumn(
@@ -105,7 +105,7 @@ fun CartScreen(cart: CartContract, onBack:() -> Unit) {
 fun preview() {
     val navController = rememberNavController()
     val fakeCart = FakeCartViewModel()
-    CartScreen(cart = fakeCart, onBack = {})
+    CartScreen(navController = navController, cart = fakeCart)
 }
 
 @Composable
