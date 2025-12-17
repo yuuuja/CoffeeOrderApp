@@ -51,7 +51,7 @@ import com.yuuuja.coffeeorderapp.ui.theme.LightBrown
 import com.yuuuja.coffeeorderapp.util.won
 import com.yuuuja.coffeeorderapp.utils.imageResOf
 import com.yuuuja.coffeeorderapp.viewmodel.CartContract
-import com.yuuuja.coffeeorderapp.viewmodel.FakeCartViewModel
+import com.yuuuja.coffeeorderapp.ui.preview.FakeCartViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -128,8 +128,7 @@ fun DetailScreen(navController: NavController, id: Long, cartContract: CartContr
     ) { pad ->
         Column(
             modifier = Modifier
-                .padding(horizontal = 32.dp, vertical = 16.dp)
-                .padding(top = 50.dp)
+                .padding(pad)
                 .fillMaxWidth()
         ) {
             DetailContent(
@@ -140,14 +139,20 @@ fun DetailScreen(navController: NavController, id: Long, cartContract: CartContr
 
             Spacer(Modifier.height(16.dp))
 
-            OptionSection(
-                menu = menu,
-                cup = cup, onCupChange = { cup = it },
-                temp = temp, onTempChange = { temp = it },
-                size = size, onSizeChange = { size = it },
-                shot = shot, onShotChange = { shot = it },
-                onExtraPriceChange = { extra -> optionExtra = extra }
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
+            ) {
+                OptionSection(
+                    menu = menu,
+                    cup = cup, onCupChange = { cup = it },
+                    temp = temp, onTempChange = { temp = it },
+                    size = size, onSizeChange = { size = it },
+                    shot = shot, onShotChange = { shot = it },
+                    onExtraPriceChange = { extra -> optionExtra = extra }
+                )
+            }
 
             if (showCartDialog) {
                 CartAddedDialog(
@@ -264,14 +269,15 @@ fun OptionSection(
     }
 
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(1.dp)
     ) {
         if (hasCupOption(category)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("컵 선택", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.width(5.dp))
+                Spacer(Modifier.width(10.dp))
                 Text(
                     "선택필수",
                     style = MaterialTheme.typography.labelMedium,
@@ -284,7 +290,7 @@ fun OptionSection(
                 AppChip(
                     "일회용 컵",
                     selected = cup == CupType.DISPOSABLE,
-                    onClick = { onCupChange(CupType.DISPOSABLE)},
+                    onClick = { onCupChange(CupType.DISPOSABLE) },
                     spec = ChipSpecs.Medium
                 )
                 AppChip(
@@ -301,7 +307,7 @@ fun OptionSection(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text("ICE & HOT", style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.width(5.dp))
+            Spacer(Modifier.width(10.dp))
             Text(
                 "선택필수",
                 style = MaterialTheme.typography.labelMedium,
@@ -347,7 +353,7 @@ fun OptionSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text("SIZE", style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.width(5.dp))
+            Spacer(Modifier.width(10.dp))
             Text(
                 "선택필수",
                 style = MaterialTheme.typography.labelMedium,
@@ -373,7 +379,7 @@ fun OptionSection(
                         AppChip(
                             label = "S\n(-400)",
                             selected = size == DrinkSize.S,
-                            onClick = {  onSizeChange(DrinkSize.S) },
+                            onClick = { onSizeChange(DrinkSize.S) },
                             spec = ChipSpecs.Small
                         )
                     }
@@ -381,7 +387,7 @@ fun OptionSection(
                         AppChip(
                             label = "M\n(+0)",
                             selected = size == DrinkSize.M,
-                            onClick = {  onSizeChange(DrinkSize.M) },
+                            onClick = { onSizeChange(DrinkSize.M) },
                             spec = ChipSpecs.Small
                         )
                     }
@@ -389,7 +395,7 @@ fun OptionSection(
                         AppChip(
                             label = "L\n(+1,200)",
                             selected = size == DrinkSize.L,
-                            onClick = {  onSizeChange(DrinkSize.L) },
+                            onClick = { onSizeChange(DrinkSize.L) },
                             spec = ChipSpecs.Small
                         )
                     }

@@ -31,12 +31,14 @@ import com.yuuuja.coffeeorderapp.model.unitPrice
 import com.yuuuja.coffeeorderapp.ui.detail.DetailScreen
 import com.yuuuja.coffeeorderapp.ui.theme.Grey
 import com.yuuuja.coffeeorderapp.ui.theme.Kaki
+import com.yuuuja.coffeeorderapp.ui.theme.LightBeige
+import com.yuuuja.coffeeorderapp.ui.theme.LightBrown
 import com.yuuuja.coffeeorderapp.ui.theme.LightGrey
 import com.yuuuja.coffeeorderapp.util.won
 import com.yuuuja.coffeeorderapp.utils.imageResOf
 import com.yuuuja.coffeeorderapp.viewmodel.CartContract
 import com.yuuuja.coffeeorderapp.viewmodel.CartViewModel
-import com.yuuuja.coffeeorderapp.viewmodel.FakeCartViewModel
+import com.yuuuja.coffeeorderapp.ui.preview.FakeCartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -152,9 +154,9 @@ fun CartBottomBar(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("총 금액", style = MaterialTheme.typography.titleMedium, color = Grey)
+                Text("총 금액", style = MaterialTheme.typography.titleLarge, color = Grey)
                 Spacer(Modifier.width(8.dp))
-                Text(totalPrice.won(), style = MaterialTheme.typography.titleMedium)
+                Text(totalPrice.won(), style = MaterialTheme.typography.titleLarge)
             }
 
             Spacer(Modifier.height(10.dp))
@@ -194,7 +196,7 @@ fun CartItemRow(
                 painter = painterResource(imageResOf(item.menu)),
                 contentDescription = item.menu.name,
                 modifier = Modifier
-                    .size(72.dp)
+                    .size(90.dp)
                     .clip(RoundedCornerShape(12.dp)),
                 contentScale = ContentScale.Crop
             )
@@ -207,7 +209,7 @@ fun CartItemRow(
                 Spacer(Modifier.height(4.dp))
 
                 Text(
-                    text = "${item.cup.label}  ·  ${item.temp.name}  ·  ${item.size.name}",
+                    text = "${item.cup.label}  \n${item.temp.name}    ${item.size.name}",
                     style = MaterialTheme.typography.bodySmall,
                     color = Grey
                 )
@@ -220,9 +222,13 @@ fun CartItemRow(
                 )
             }
 
-            Column(horizontalAlignment = Alignment.End) {
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
                 IconButton(onClick = onRemove) {
-                    Icon(Icons.Default.Close, contentDescription = "삭제", tint = Grey)
+                    Icon(Icons.Default.Close, contentDescription = "삭제", tint = Kaki)
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -246,7 +252,7 @@ private fun SmallSquareButton(
         contentPadding = PaddingValues(0.dp),
         shape = RoundedCornerShape(6.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = LightGrey,
+            containerColor = LightBrown,
             contentColor = Color.White
         )
     ) { Text(text) }

@@ -36,7 +36,7 @@ import com.yuuuja.coffeeorderapp.ui.theme.*
 import com.yuuuja.coffeeorderapp.util.won
 import com.yuuuja.coffeeorderapp.utils.imageResOf
 import com.yuuuja.coffeeorderapp.viewmodel.CartContract
-import com.yuuuja.coffeeorderapp.viewmodel.FakeCartViewModel
+import com.yuuuja.coffeeorderapp.ui.preview.FakeCartViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
