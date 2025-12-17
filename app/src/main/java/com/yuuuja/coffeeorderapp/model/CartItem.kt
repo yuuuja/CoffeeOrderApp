@@ -35,3 +35,12 @@ fun CartItem.unitPrice(): Int = menu.price + unitExtra()
 
 // 수량 포함 가격
 fun CartItem.linePrice(): Int = unitPrice() * quantity
+
+fun CartItem.optionDescription(): String? {
+    return when (shot) {
+        ShotOption.LIGHT -> "연하게"
+        ShotOption.PLUS1SHOT -> "샷 추가(+600)"
+        ShotOption.PLUS2SHOT -> "2샷 추가(+1200)"
+        ShotOption.NONE -> null
+    }
+}

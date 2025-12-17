@@ -44,6 +44,7 @@ import com.yuuuja.coffeeorderapp.rules.sizeConfigOf
 import com.yuuuja.coffeeorderapp.rules.tempConfigOf
 import com.yuuuja.coffeeorderapp.ui.common.AppChip
 import com.yuuuja.coffeeorderapp.ui.common.ChipSpecs
+import com.yuuuja.coffeeorderapp.ui.common.SmallSquareButton
 import com.yuuuja.coffeeorderapp.ui.theme.DarkBrown
 import com.yuuuja.coffeeorderapp.ui.theme.Grey
 import com.yuuuja.coffeeorderapp.ui.theme.Kaki
@@ -162,6 +163,7 @@ fun DetailScreen(navController: NavController, id: Long, cartContract: CartContr
                     },
                     onContinue = {
                         showCartDialog = false
+                        navController.navigate("home")
                     }
                 )
             }
@@ -478,39 +480,19 @@ fun DetailBottomBar(
                     //Spacer(Modifier.width(150.dp))
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Button(
-                        onClick = onMinus,
-                        modifier = Modifier.size(28.dp),
-                        contentPadding = PaddingValues(0.dp),
-                        shape = RoundedCornerShape(4.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = LightBrown,
-                            contentColor = Color.White
-                        ),
-
-                        ) {
-                        Text("-")
-                    }
-                    Spacer(Modifier.width(5.dp))
+                    SmallSquareButton(text = "－", onClick = onMinus)
+                    Spacer(Modifier.width(6.dp))
                     Text(
                         text = quantity.toString(),
                         modifier = Modifier.padding(horizontal = 8.dp),
                         style = MaterialTheme.typography.bodyLarge
                     )
-                    Spacer(Modifier.width(5.dp))
-                    Button(
-                        onClick = onPlus,
-                        modifier = Modifier.size(28.dp),
-                        contentPadding = PaddingValues(0.dp),
-                        shape = RoundedCornerShape(4.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = LightBrown,
-                            contentColor = Color.White
-                        ),
+                    Spacer(Modifier.width(6.dp))
+                    SmallSquareButton(text = "＋", onClick = onPlus)
 
-                        ) {
-                        Text("+")
-                    }
+
+                    Spacer(Modifier.width(5.dp))
+
                 }
             }
 

@@ -30,9 +30,11 @@ class CartViewModel : ViewModel(), CartContract {
     }
 
     override fun updateQuantity(id: Long, quantity: Int) {
-        _items.find { it.id == id }?.let {
-            val index = _items.indexOf(it)
-            _items[index] = it.copy(quantity = quantity)
+        _items.find { it.id == id }?.let { item ->
+            val index = _items.indexOf(item)
+            _items[index] = item.copy(
+                quantity = quantity.coerceAtLeast(1)
+            )
         }
     }
 

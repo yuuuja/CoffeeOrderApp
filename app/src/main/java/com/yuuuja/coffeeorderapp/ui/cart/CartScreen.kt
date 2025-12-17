@@ -27,7 +27,9 @@ import androidx.navigation.compose.rememberNavController
 import com.yuuuja.coffeeorderapp.model.CartItem
 import com.yuuuja.coffeeorderapp.model.CupType
 import com.yuuuja.coffeeorderapp.model.linePrice
+import com.yuuuja.coffeeorderapp.model.optionDescription
 import com.yuuuja.coffeeorderapp.model.unitPrice
+import com.yuuuja.coffeeorderapp.ui.common.SmallSquareButton
 import com.yuuuja.coffeeorderapp.ui.detail.DetailScreen
 import com.yuuuja.coffeeorderapp.ui.theme.Grey
 import com.yuuuja.coffeeorderapp.ui.theme.Kaki
@@ -154,9 +156,9 @@ fun CartBottomBar(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("총 금액", style = MaterialTheme.typography.titleLarge, color = Grey)
+                Text("총 금액", style = MaterialTheme.typography.titleMedium, color = Grey)
                 Spacer(Modifier.width(8.dp))
-                Text(totalPrice.won(), style = MaterialTheme.typography.titleLarge)
+                Text(totalPrice.won(), style = MaterialTheme.typography.titleMedium)
             }
 
             Spacer(Modifier.height(10.dp))
@@ -170,7 +172,7 @@ fun CartBottomBar(
                     contentColor = Color.White
                 )
             ) {
-                Text("주문하기")
+                Text("주문하기", style = MaterialTheme.typography.titleMedium)
             }
         }
     }
@@ -186,38 +188,46 @@ fun CartItemRow(
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(12.dp)
+                .heightIn(min = 95.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painter = painterResource(imageResOf(item.menu)),
                 contentDescription = item.menu.name,
                 modifier = Modifier
-                    .size(90.dp)
+                    .size(95.dp)
                     .clip(RoundedCornerShape(12.dp)),
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(Modifier.weight(1f))
+            Spacer(Modifier.width(15.dp))
 
             Column(Modifier.weight(1f)) {
                 Text(item.menu.name, style = MaterialTheme.typography.titleMedium)
 
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(5.dp))
 
                 Text(
                     text = "${item.cup.label}  \n${item.temp.name}    ${item.size.name}",
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = Grey
                 )
+                item.optionDescription()?.let { optionText ->
+                    Text(
+                        text = optionText,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Grey
+                    )
+                }
 
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(5.dp))
 
                 Text(
-                    text = item.unitPrice().won(),
+                    text = item.linePrice().won(),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -227,13 +237,26 @@ fun CartItemRow(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = onRemove) {
-                    Icon(Icons.Default.Close, contentDescription = "삭제", tint = Kaki)
+                IconButton(
+                    onClick = onRemove,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(Icons.Default.Close,
+                        contentDescription = "삭제",
+                        tint = Kaki,
+                        modifier = Modifier.size(18.dp)
+                    )
                 }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(Modifier.height(40.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     SmallSquareButton(text = "－", onClick = onMinus)
+                    Spacer(Modifier.width(10.dp))
                     Text(item.quantity.toString(), modifier = Modifier.padding(horizontal = 8.dp))
+                    Spacer(Modifier.width(10.dp))
                     SmallSquareButton(text = "＋", onClick = onPlus)
                 }
             }
@@ -241,22 +264,7 @@ fun CartItemRow(
     }
 }
 
-@Composable
-private fun SmallSquareButton(
-    text: String,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier.size(30.dp),
-        contentPadding = PaddingValues(0.dp),
-        shape = RoundedCornerShape(6.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = LightBrown,
-            contentColor = Color.White
-        )
-    ) { Text(text) }
-}
+
 
 private val CupType.label: String
     get() = when (this) {
