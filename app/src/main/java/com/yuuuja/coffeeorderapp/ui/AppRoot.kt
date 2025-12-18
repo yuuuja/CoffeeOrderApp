@@ -28,7 +28,10 @@ fun AppRoot() {
         startDestination = "home"
     ) {
         composable("home") {
-           HomeRoute(navController)
+           HomeRoute(
+               navController = navController,
+               cartContract = cartViewModel
+           )
         }
         composable(
             route = "detail/{id}",

@@ -7,8 +7,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +29,7 @@ import com.yuuuja.coffeeorderapp.model.Category
 import com.yuuuja.coffeeorderapp.model.MenuMini
 import com.yuuuja.coffeeorderapp.model.dummyMenus
 import com.yuuuja.coffeeorderapp.ui.common.AppChip
+import com.yuuuja.coffeeorderapp.ui.common.CartIcon
 import com.yuuuja.coffeeorderapp.ui.common.ChipSpecs
 import com.yuuuja.coffeeorderapp.ui.theme.*
 import com.yuuuja.coffeeorderapp.util.won
@@ -68,9 +67,10 @@ fun HomeScreen(navController: NavController, cartContract: CartContract) {
                 ),
                 title = { Text("MENU") },
                 actions = {
-                    IconButton(onClick = { navController.navigate("cart") }) {
-                        Icon(Icons.Default.ShoppingCart, contentDescription = "장바구니", tint = Kaki)
-                    }
+                    CartIcon(
+                        totalQuantity = cartContract.totalQuantity,
+                        onClick = { navController.navigate("cart") }
+                    )
                 }
             )
         },

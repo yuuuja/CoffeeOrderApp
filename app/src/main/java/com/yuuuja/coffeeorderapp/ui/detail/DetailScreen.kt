@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,7 @@ import com.yuuuja.coffeeorderapp.rules.hasPersonalOption
 import com.yuuuja.coffeeorderapp.rules.sizeConfigOf
 import com.yuuuja.coffeeorderapp.rules.tempConfigOf
 import com.yuuuja.coffeeorderapp.ui.common.AppChip
+import com.yuuuja.coffeeorderapp.ui.common.CartIcon
 import com.yuuuja.coffeeorderapp.ui.common.ChipSpecs
 import com.yuuuja.coffeeorderapp.ui.common.SmallSquareButton
 import com.yuuuja.coffeeorderapp.ui.theme.DarkBrown
@@ -61,6 +63,12 @@ fun DetailScreen(navController: NavController, id: Long, cartContract: CartContr
 
     val menu: MenuMini = remember(id) {
         dummyMenus.first { it.id == id }
+    }
+
+    val totalQuantity by remember {
+        derivedStateOf {
+            cartContract.items.sumOf { it.quantity }
+        }
     }
 
     // 수량 / 사이즈 / 온도 등은 나중에 ViewModel로 빼도 되고, 지금은 remember로 충분
@@ -97,9 +105,10 @@ fun DetailScreen(navController: NavController, id: Long, cartContract: CartContr
                 },
                 title = { Text("") },
                 actions = {
-                    IconButton(onClick = { navController.navigate("cart") }) {
-                        Icon(Icons.Default.ShoppingCart, contentDescription = "장바구니", tint = Kaki)
-                    }
+                    CartIcon(
+                        totalQuantity = totalQuantity,
+                        onClick = { navController.navigate("cart") }
+                    )
                 }
             )
         },

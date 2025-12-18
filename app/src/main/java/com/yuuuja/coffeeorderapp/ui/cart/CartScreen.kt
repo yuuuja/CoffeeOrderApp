@@ -104,14 +104,6 @@ fun CartScreen(navController: NavController, cart: CartContract) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun preview() {
-    val navController = rememberNavController()
-    val fakeCart = FakeCartViewModel()
-    CartScreen(navController = navController, cart = fakeCart)
-}
-
 @Composable
 fun EmptyCart(
     modifier: Modifier = Modifier,
