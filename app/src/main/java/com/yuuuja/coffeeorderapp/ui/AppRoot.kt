@@ -25,7 +25,7 @@ fun AppRoot() {
 
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "splash"
     ) {
         composable("home") {
            HomeRoute(
