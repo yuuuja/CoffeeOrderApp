@@ -146,7 +146,7 @@ fun PaymentButton(
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(0.dp),
+                        .padding(10.dp),
                     contentScale = ContentScale.Fit
                 )
             }
