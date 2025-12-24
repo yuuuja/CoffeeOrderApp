@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,7 +49,6 @@ import com.yuuuja.coffeeorderapp.ui.common.SmallSquareButton
 import com.yuuuja.coffeeorderapp.ui.theme.DarkBrown
 import com.yuuuja.coffeeorderapp.ui.theme.Grey
 import com.yuuuja.coffeeorderapp.ui.theme.Kaki
-import com.yuuuja.coffeeorderapp.ui.theme.LightBrown
 import com.yuuuja.coffeeorderapp.util.won
 import com.yuuuja.coffeeorderapp.utils.imageResOf
 import com.yuuuja.coffeeorderapp.viewmodel.CartContract

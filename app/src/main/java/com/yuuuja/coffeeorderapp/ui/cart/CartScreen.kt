@@ -11,8 +11,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,27 +18,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.yuuuja.coffeeorderapp.model.CartItem
 import com.yuuuja.coffeeorderapp.model.CupType
 import com.yuuuja.coffeeorderapp.model.linePrice
 import com.yuuuja.coffeeorderapp.model.optionDescription
-import com.yuuuja.coffeeorderapp.model.unitPrice
 import com.yuuuja.coffeeorderapp.ui.common.SmallSquareButton
-import com.yuuuja.coffeeorderapp.ui.detail.DetailScreen
 import com.yuuuja.coffeeorderapp.ui.theme.Grey
 import com.yuuuja.coffeeorderapp.ui.theme.Kaki
-import com.yuuuja.coffeeorderapp.ui.theme.LightBeige
-import com.yuuuja.coffeeorderapp.ui.theme.LightBrown
-import com.yuuuja.coffeeorderapp.ui.theme.LightGrey
 import com.yuuuja.coffeeorderapp.util.won
 import com.yuuuja.coffeeorderapp.utils.imageResOf
 import com.yuuuja.coffeeorderapp.viewmodel.CartContract
-import com.yuuuja.coffeeorderapp.viewmodel.CartViewModel
-import com.yuuuja.coffeeorderapp.ui.preview.FakeCartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
