@@ -24,17 +24,20 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +52,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Checkbox
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.yuuuja.coffeeorderapp.model.CartItem
@@ -58,6 +62,7 @@ import com.yuuuja.coffeeorderapp.model.optionDescription
 import com.yuuuja.coffeeorderapp.ui.preview.FakeCartViewModel
 import com.yuuuja.coffeeorderapp.ui.theme.Grey
 import com.yuuuja.coffeeorderapp.ui.theme.Kaki
+import com.yuuuja.coffeeorderapp.ui.theme.LightBrown
 import com.yuuuja.coffeeorderapp.ui.theme.LightGrey
 import com.yuuuja.coffeeorderapp.util.won
 import com.yuuuja.coffeeorderapp.utils.imageResOf
@@ -169,7 +174,11 @@ fun OrderInfoScreen(navController: NavController, cart: CartContract, entryType:
                     ) {
                         Checkbox(
                             checked = rememberRequest,
-                            onCheckedChange = { rememberRequest = it }
+                            onCheckedChange = { rememberRequest = it },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = LightBrown,
+                                uncheckedColor = Grey
+                            )
                         )
                         Text("다음에도 사용")
                     }
@@ -232,22 +241,43 @@ fun OrderInfoScreen(navController: NavController, cart: CartContract, entryType:
 
             item {
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    Text("총 금액 ${totalPrice.won()}", style = MaterialTheme.typography.titleMedium)
-                    Spacer(Modifier.height(12.dp))
+                    Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text(
+                            "총 금액 ",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text("${totalPrice.won()}", style = MaterialTheme.typography.titleMedium)
+                    }
                 }
+            }
+
+            item {
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    thickness = 2.dp,
+                    color = LightGrey
+                )
             }
 
             //약관 동의
             item {
                 Row(
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Checkbox(
                         checked = agreed,
-                        onCheckedChange = { agreed = it }
+                        onCheckedChange = { agreed = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = LightBrown,
+                            uncheckedColor = Grey
+                        )
                     )
-                    Text("주문상품정보 및 결제대행 서비스 이용약관에 \n 모두 동의합니다.")
+                    Text(
+                        text = "주문상품정보 및 결제대행 서비스 이용약관에 모두 동의합니다.",
+                        fontSize = 13.sp
+                    )
                 }
             }
         }
