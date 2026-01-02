@@ -1,5 +1,6 @@
 package com.yuuuja.coffeeorderapp.ui.orderInfo
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -149,9 +150,22 @@ fun OrderInfoScreen(navController: NavController, cart: CartContract, entryType:
 
             item {
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    SectionTitle("요청 사항")
 
-                    Spacer(Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier.padding(bottom = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SectionTitle("요청 사항")
+                        Spacer(Modifier.width(5.dp))
+                        Text(
+                            text = "(ex. 캐리어를 준비해주세요)",
+                            fontSize = 12.sp,
+                            color = LightBrown,
+                            modifier = Modifier.padding(top = 2.dp)
+                        )
+                    }
+
+                    Spacer(Modifier.height(5.dp))
 
                     val maxLength = 20
 
@@ -162,7 +176,9 @@ fun OrderInfoScreen(navController: NavController, cart: CartContract, entryType:
                                 requestMessage = it
                             }
                         },
-                        placeholder = { Text("요청 사항이 있으면 적어주세요(최대 20자)", color = Grey) },
+                        placeholder = {
+                            Text("요청 사항이 있으면 적어주세요(최대 20자)", color = Grey, fontSize = 13.sp)
+                                      },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
@@ -303,10 +319,10 @@ private fun SectionTitle(text: String) {
 
 @Composable
 fun OrderItemRow(item: CartItem) {
-    ElevatedCard(
+    OutlinedCard(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp)
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        border = BorderStroke(1.dp, LightGrey)
     ) {
         Row(
             modifier = Modifier
