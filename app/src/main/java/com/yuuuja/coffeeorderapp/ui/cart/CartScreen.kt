@@ -57,7 +57,7 @@ fun CartScreen(navController: NavController, cart: CartContract) {
             if (items.isNotEmpty()) {
                 CartBottomBar(
                     totalPrice = totalPrice,
-                    onOrder = { /* ToDo */ }
+                    onOrder = { navController.navigate("orderInfo/fromCart")}
                 )
             }
         }
