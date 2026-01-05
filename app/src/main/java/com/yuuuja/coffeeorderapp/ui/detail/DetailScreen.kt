@@ -116,7 +116,21 @@ fun DetailScreen(navController: NavController, id: Long, cartContract: CartContr
                 quantity = quantity,
                 onMinus = { if (quantity > 1) quantity-- },
                 onPlus = { quantity++ },
-                onBuyNow = { /* TODO */ },
+                onBuyNow = {
+                    cartContract.clear()
+                    cartContract.add(
+                        CartItem(
+                            id = System.currentTimeMillis(), // 임시 ID (나중에 UUID/증가값으로 개선)
+                            menu = menu,
+                            quantity = quantity,
+                            cup = cup,
+                            temp = temp,
+                            size = size,
+                            shot = shot
+                        )
+                    )
+                    navController.navigate("orderInfo/fromDetail")
+                },
                 onAddToCart = {
                     cartContract.add(
                         CartItem(

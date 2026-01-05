@@ -8,4 +8,5 @@ interface CartContract {
     fun add(item: CartItem)
     fun remove(id: Long)
     fun updateQuantity(id: Long, quantity: Int)
+    fun clear()
 }

@@ -38,6 +38,6 @@ class CartViewModel : ViewModel(), CartContract {
         }
     }
 
-    fun clear() = _items.clear()
+    override fun clear() = _items.clear()
 
 }
