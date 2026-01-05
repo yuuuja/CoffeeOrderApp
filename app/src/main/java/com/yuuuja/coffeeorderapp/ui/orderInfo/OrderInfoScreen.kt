@@ -1,5 +1,6 @@
 package com.yuuuja.coffeeorderapp.ui.orderInfo
 
+import android.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -27,18 +28,22 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -91,6 +96,8 @@ fun OrderInfoScreen(navController: NavController, cart: CartContract, entryType:
 
     val totalPrice = cart.items.sumOf { it.linePrice() }
 
+    var expanded by remember { mutableStateOf(false) }
+
     Scaffold(
         containerColor = Color.White,
         topBar = {
@@ -125,7 +132,7 @@ fun OrderInfoScreen(navController: NavController, cart: CartContract, entryType:
                 .padding(pad)
                 .fillMaxSize(),
             contentPadding = PaddingValues(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
             item {
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -134,7 +141,7 @@ fun OrderInfoScreen(navController: NavController, cart: CartContract, entryType:
             }
 
             items(cart.items) { item ->
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Column(modifier = Modifier.padding(horizontal = 8.dp)) {
                     OrderItemRow(item)
                 }
             }
@@ -177,10 +184,15 @@ fun OrderInfoScreen(navController: NavController, cart: CartContract, entryType:
                             }
                         },
                         placeholder = {
-                            Text("요청 사항이 있으면 적어주세요(최대 20자)", color = Grey, fontSize = 13.sp)
-                                      },
+                            Text("요청 사항이 있으면 적어주세요(최대 20자)", color = Grey, fontSize = 14.sp)
+                        },
                         modifier = Modifier.fillMaxWidth(),
-                        singleLine = true
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = LightBrown,
+                            unfocusedBorderColor = LightGrey,
+                            cursorColor = Grey
+                        )
                     )
                     Spacer(Modifier.height(8.dp))
 
@@ -207,21 +219,57 @@ fun OrderInfoScreen(navController: NavController, cart: CartContract, entryType:
 
                     Spacer(Modifier.height(10.dp))
 
-                    OutlinedTextField(
-                        value = "사용 가능한 쿠폰이 없습니다.",
-                        onValueChange = {},
-                        modifier = Modifier.fillMaxWidth(),
-                        //enabled = false,
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = null,
-                                tint = Grey
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = "",
+                            onValueChange = {},
+                            readOnly = true,
+                            modifier = Modifier
+                                .menuAnchor()
+                                .fillMaxWidth(),
+                            placeholder = {
+                                Text("사용가능한 쿠폰이 없습니다.", color = Grey, fontSize = 14.sp)
+                            },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                            },
+                            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = LightBrown,
+                                unfocusedBorderColor = LightGrey,
+                                cursorColor = Grey,
+                                disabledTextColor = LightGrey,
+                                disabledTrailingIconColor = Grey
+                            )
+                        )
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            containerColor = Color.White
+                        ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = false,
+                                            onClick = null
+                                        )
+                                        Spacer(Modifier.width(8.dp))
+                                        Text("사용 가능한 쿠폰이 없습니다.", color = Grey, fontSize = 13.sp)
+                                    }
+                                },
+
+                                onClick = { expanded = false },
+                                enabled = false
                             )
                         }
-                    )
+                    }
                 }
-
             }
 
             item {
@@ -259,7 +307,7 @@ fun OrderInfoScreen(navController: NavController, cart: CartContract, entryType:
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Row(horizontalArrangement = Arrangement.SpaceBetween) {
                         Text(
-                            "총 금액 ",
+                            "총 금액  ",
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text("${totalPrice.won()}", style = MaterialTheme.typography.titleMedium)
@@ -279,7 +327,7 @@ fun OrderInfoScreen(navController: NavController, cart: CartContract, entryType:
             //약관 동의
             item {
                 Row(
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                    modifier = Modifier.padding(horizontal = 2.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Checkbox(
@@ -367,7 +415,7 @@ fun OrderBottomBar(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(12.dp)
         ) {
 
             Button(
