@@ -13,8 +13,11 @@ import com.yuuuja.coffeeorderapp.ui.detail.DetailScreen
 import com.yuuuja.coffeeorderapp.ui.cart.CartScreen
 import com.yuuuja.coffeeorderapp.ui.detail.DetailRoute
 import com.yuuuja.coffeeorderapp.ui.home.HomeRoute
+import com.yuuuja.coffeeorderapp.ui.orderInfo.OrderEntryType
+import com.yuuuja.coffeeorderapp.ui.orderInfo.OrderRoute
 import com.yuuuja.coffeeorderapp.ui.splash.SplashScreen
 import com.yuuuja.coffeeorderapp.viewmodel.CartViewModel
+import kotlin.enums.enumEntries
 
 @Composable
 fun AppRoot() {
@@ -52,6 +55,21 @@ fun AppRoot() {
         }
         composable("splash") {
             SplashScreen(navController = navController)
+        }
+        composable("orderInfo/fromDetail") {
+            OrderRoute(
+                navController = navController,
+                cartContract = cartViewModel,
+                entryType = OrderEntryType.FROM_DETAIL
+            )
+        }
+
+        composable("orderInfo/fromCart") {
+            OrderRoute(
+                navController = navController,
+                cartContract = cartViewModel,
+                entryType = OrderEntryType.FROM_CART
+            )
         }
     }
 }

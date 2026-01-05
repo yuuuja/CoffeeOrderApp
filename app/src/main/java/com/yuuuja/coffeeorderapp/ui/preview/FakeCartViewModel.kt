@@ -36,7 +36,7 @@ class FakeCartViewModel : CartContract {
     override fun remove(id: Long) {}
     override fun updateQuantity(id: Long, quantity: Int) {}
 
-    fun clear() {
+    override fun clear() {
         _items.clear()
     }
 }
